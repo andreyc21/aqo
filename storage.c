@@ -773,7 +773,7 @@ _deform_qtexts_record_cb(void *data, size_t size)
 										   HASH_ENTER, &found);
 	Assert(!found);
 
-	entry->qtext_dp = dsa_allocate(qtext_dsa, len);
+	entry->qtext_dp = dsa_allocate_extended(qtext_dsa, len, DSA_ALLOC_NO_OOM | DSA_ALLOC_ZERO);
 	if (!_check_dsa_validity(entry->qtext_dp))
 	{
 		/*
@@ -1111,7 +1111,7 @@ aqo_qtext_store(uint64 queryid, const char *query_string)
 
 		entry->queryid = queryid;
 		size = size > querytext_max_size ? querytext_max_size : size;
-		entry->qtext_dp = dsa_allocate0(qtext_dsa, size);
+		entry->qtext_dp = dsa_allocate_extended(qtext_dsa, size, DSA_ALLOC_NO_OOM | DSA_ALLOC_ZERO);
 
 		if (!_check_dsa_validity(entry->qtext_dp))
 		{
@@ -1399,7 +1399,7 @@ aqo_data_store(uint64 fs, int fss, AqoDataArgs *data, List *reloids)
 		entry->nrels = nrels;
 
 		size = _compute_data_dsa(entry);
-		entry->data_dp = dsa_allocate0(data_dsa, size);
+		entry->data_dp = dsa_allocate_extended(data_dsa, size, DSA_ALLOC_NO_OOM | DSA_ALLOC_ZERO);
 
 		if (!_check_dsa_validity(entry->data_dp))
 		{
@@ -1431,7 +1431,7 @@ aqo_data_store(uint64 fs, int fss, AqoDataArgs *data, List *reloids)
 
 		/* Need to re-allocate DSA chunk */
 		dsa_free(data_dsa, entry->data_dp);
-		entry->data_dp = dsa_allocate0(data_dsa, size);
+		entry->data_dp = dsa_allocate_extended(data_dsa, size, DSA_ALLOC_NO_OOM | DSA_ALLOC_ZERO);
 
 		if (!_check_dsa_validity(entry->data_dp))
 		{
