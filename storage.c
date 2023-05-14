@@ -818,7 +818,7 @@ aqo_qtexts_load(void)
 
 	if (!found)
 	{
-		if (!aqo_qtext_store(0, "COMMON feature space (do not delete!)"))
+		if (!aqo_qtext_store(0, "COMMON feature space (do not delete!)", NULL))
 			elog(PANIC, "[AQO] DSA Initialization was unsuccessful");
 	}
 }
@@ -1066,12 +1066,15 @@ dsa_init()
  * XXX: Maybe merge with aqo_queries ?
  */
 bool
-aqo_qtext_store(uint64 queryid, const char *query_string)
+aqo_qtext_store(uint64 queryid, const char *query_string, bool *dsa_valid)
 {
 	QueryTextEntry *entry;
 	bool			found;
 	bool			tblOverflow;
 	HASHACTION		action;
+
+	if (dsa_valid)
+		*dsa_valid = true;
 
 	Assert(!LWLockHeldByMe(&aqo_state->qtexts_lock));
 
@@ -1121,6 +1124,8 @@ aqo_qtext_store(uint64 queryid, const char *query_string)
 			 */
 			(void) hash_search(qtexts_htab, &queryid, HASH_REMOVE, NULL);
 			LWLockRelease(&aqo_state->qtexts_lock);
+			if (dsa_valid)
+				*dsa_valid = false;
 			return false;
 		}
 
@@ -2689,7 +2694,7 @@ aqo_query_texts_update(PG_FUNCTION_ARGS)
 
 	str_buff = (char*) palloc(str_len);
 	text_to_cstring_buffer(str, str_buff, str_len);
-	res = aqo_qtext_store(queryid, str_buff);
+	res = aqo_qtext_store(queryid, str_buff, NULL);
 	pfree(str_buff);
 
 	PG_RETURN_BOOL(res);

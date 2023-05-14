@@ -117,6 +117,18 @@ aqo_free_callback(ResourceReleasePhase phase,
 	}
 }
 
+
+/* Validation function for dsm_size_max GUC*/
+static bool check_dsa_hook(int *newval, void **extra, GucSource source)
+{
+    if (*newval < dsm_size_max)
+    {
+		GUC_check_errdetail("dsm_size_max can't be smaller than the current value");
+        return false;
+    }
+    return true;
+}
+
 void
 _PG_init(void)
 {
@@ -274,7 +286,7 @@ _PG_init(void)
 							0, INT_MAX,
 							PGC_SUSET,
 							0,
-							NULL,
+							check_dsa_hook,
 							NULL,
 							NULL
 	);
