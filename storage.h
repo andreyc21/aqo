@@ -132,6 +132,7 @@ extern HTAB *stat_htab;
 extern HTAB *qtexts_htab;
 extern HTAB *queries_htab; /* TODO */
 extern HTAB *data_htab; /* TODO */
+extern bool dsa_reset;
 
 extern StatEntry *aqo_stat_store(uint64 queryid, bool use_aqo,
 								 AqoStatArgs *stat_arg, bool append_mode);

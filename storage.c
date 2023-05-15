@@ -73,6 +73,7 @@ dsa_area *qtext_dsa = NULL;
 HTAB *data_htab = NULL;
 dsa_area *data_dsa = NULL;
 HTAB *deactivated_queries = NULL;
+bool dsa_reset = false;
 
 /*
  * Used to check data file consistency
@@ -535,6 +536,7 @@ aqo_qtexts_flush(void)
 	long			entries;
 
 	dsa_init();
+	dsa_reset = false;
 	LWLockAcquire(&aqo_state->qtexts_lock, LW_EXCLUSIVE);
 
 	if (!aqo_state->qtexts_changed)
@@ -599,6 +601,7 @@ aqo_data_flush(void)
 	long			entries;
 
 	dsa_init();
+	dsa_reset = false;
 	LWLockAcquire(&aqo_state->data_lock, LW_EXCLUSIVE);
 
 	if (!aqo_state->data_changed)
@@ -1082,6 +1085,7 @@ aqo_qtext_store(uint64 queryid, const char *query_string, bool *dsa_valid)
 		return false;
 
 	dsa_init();
+	dsa_reset = false;
 
 	LWLockAcquire(&aqo_state->qtexts_lock, LW_EXCLUSIVE);
 
@@ -1181,6 +1185,7 @@ aqo_query_texts(PG_FUNCTION_ARGS)
 	MemoryContextSwitchTo(oldcontext);
 
 	dsa_init();
+	dsa_reset = false;
 	memset(nulls, 0, QT_TOTAL_NCOLS);
 	LWLockAcquire(&aqo_state->qtexts_lock, LW_SHARED);
 	hash_seq_init(&hash_seq, qtexts_htab);
@@ -1245,6 +1250,7 @@ _aqo_qtexts_remove(uint64 queryid)
 	QueryTextEntry *entry;
 
 	dsa_init();
+	dsa_reset = false;
 
 	Assert(!LWLockHeldByMe(&aqo_state->qtexts_lock));
 	LWLockAcquire(&aqo_state->qtexts_lock, LW_EXCLUSIVE);
@@ -1373,6 +1379,7 @@ aqo_data_store(uint64 fs, int fss, AqoDataArgs *data, List *reloids)
 	Assert(data->rows > 0);
 
 	dsa_init();
+	dsa_reset = false;
 
 	LWLockAcquire(&aqo_state->data_lock, LW_EXCLUSIVE);
 
@@ -1656,6 +1663,7 @@ load_aqo_data(uint64 fs, int fss, OkNNrdata *data, List **reloids,
 	Assert(!LWLockHeldByMe(&aqo_state->data_lock));
 
 	dsa_init();
+	dsa_reset = false;
 
 	LWLockAcquire(&aqo_state->data_lock, LW_SHARED);
 
@@ -1779,6 +1787,7 @@ aqo_data(PG_FUNCTION_ARGS)
 	MemoryContextSwitchTo(oldcontext);
 
 	dsa_init();
+	dsa_reset = false;
 	LWLockAcquire(&aqo_state->data_lock, LW_SHARED);
 	hash_seq_init(&hash_seq, data_htab);
 	while ((entry = hash_seq_search(&hash_seq)) != NULL)
@@ -2243,6 +2252,8 @@ aqo_reset(PG_FUNCTION_ARGS)
 	/* Cleanup cache of deactivated queries */
 	reset_deactivated_queries();
 
+	dsa_reset = true;
+
 	PG_RETURN_INT64(counter);
 }
 
@@ -2267,6 +2278,7 @@ cleanup_aqo_database(bool gentle, int *fs_num, int *fss_num)
 
 	/* Call it because we might touch DSA segments during the cleanup */
 	dsa_init();
+	dsa_reset = false;
 
 	*fs_num = 0;
 	*fss_num = 0;

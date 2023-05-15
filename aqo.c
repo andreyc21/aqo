@@ -121,7 +121,7 @@ aqo_free_callback(ResourceReleasePhase phase,
 /* Validation function for dsm_size_max GUC*/
 static bool check_dsa_hook(int *newval, void **extra, GucSource source)
 {
-    if (*newval < dsm_size_max)
+    if (*newval < dsm_size_max && !dsa_reset)
     {
 		GUC_check_errdetail("dsm_size_max can't be smaller than the current value");
         return false;
