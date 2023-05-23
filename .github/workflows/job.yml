@@ -96,9 +96,9 @@ jobs:
       run: |
         cd $PG_DIR
         ./configure $CONFIGURE_OPTS CFLAGS="-O0"
-        make clean > /dev/null
-        make -C contrib clean > /dev/null
-        make -j2 > /dev/null && make -j2 -C contrib > /dev/null
+        make clean
+        make -C contrib clean
+        make -j2 && make -j2 -C contrib
         make install >> make.log
         make -C contrib install >> make.log
         make -C doc install > /dev/null
