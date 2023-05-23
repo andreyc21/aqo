@@ -86,6 +86,11 @@ jobs:
         echo "JOB path: $JOB_DIR"
         echo "PG Environment: dbname: $PGDATABASE, host: $PGHOST, pgdata: $PGDATA, pguser: $PGUSER, pgport: $PGPORT"
 
+
+    - name "Install Deps"
+      run: |
+          sudo apt-get update
+          sudo apt-get -y install libipc-run-perl 
     - name: "Compilation"
       run: |
         cd $PG_DIR

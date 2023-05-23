@@ -7,7 +7,7 @@ env:
 # Trigger it each timeon push or pull request. Honestly, it will be redundant
 # most of the time, but external pull-request checks don't be missed out.
 on:
-  push:
+  workflow_dispatch:
   pull_request:
 
 jobs:
