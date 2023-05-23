@@ -90,7 +90,7 @@ jobs:
     - name: "Install Deps"
       run: |
         sudo apt-get update
-        sudo apt-get -y install libipc-run-perl
+        sudo apt-get -y install libipc-run-perl libxml2-utils
 
     - name: "Compilation"
       run: |
