@@ -70,7 +70,7 @@ jobs:
     - name: "make check"
       run: |
         cd $PG_DIR
-        ./configure $CONFIGURE_OPTS CFLAGS="-O2" >
+        ./configure $CONFIGURE_OPTS CFLAGS="-O2"
         make -j4 > /dev/null && make -j4 -C contrib > /dev/null
         env CLIENTS=50 THREADS=50 make -C contrib/aqo check
 
