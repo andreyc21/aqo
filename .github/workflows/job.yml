@@ -94,6 +94,7 @@ jobs:
 
     - name: "Compilation"
       run: |
+        set -x
         cd $PG_DIR
         ./configure $CONFIGURE_OPTS CFLAGS="-O0"
         make clean
