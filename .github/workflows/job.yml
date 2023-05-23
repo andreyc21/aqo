@@ -90,7 +90,7 @@ jobs:
     - name: "Install Deps"
       run: |
         sudo apt-get update
-        sudo apt-get -y install libipc-run-perl libxml2-utils
+        sudo apt-get -y install libipc-run-perl
 
     - name: "Compilation"
       run: |
@@ -102,7 +102,6 @@ jobs:
         make -j2 && make -j2 -C contrib
         make install >> make.log
         make -C contrib install >> make.log
-        make -C doc install > /dev/null
 
     - name: "Launch AQO instance"
       run: |
