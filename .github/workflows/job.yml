@@ -89,8 +89,9 @@ jobs:
 
     - name "Install Deps"
       run: |
-          sudo apt-get update
-          sudo apt-get -y install libipc-run-perl 
+        sudo apt-get update
+        sudo apt-get -y install libipc-run-perl
+
     - name: "Compilation"
       run: |
         cd $PG_DIR
